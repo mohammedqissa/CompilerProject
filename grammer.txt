@@ -1,0 +1,100 @@
+prog-decl -> heading declarations block .
+
+heading -> program programname ;
+
+block -> begin stmt-list end
+
+declarations -> const-decl var-decl
+
+const-decl -> const const-list
+const-decl -> ''
+
+const-list -> constname = value ; const-list
+const-list -> ''
+
+var-decl -> var var-list
+var-decl -> ''
+
+var-list -> var-item ; var-list
+var-list -> ''
+ 
+var-item -> name-list : data-type
+
+name-list -> varname more-names
+
+more-names -> , name-list
+more-names -> ''
+
+data-type -> integer
+data-type -> real
+data-type -> char
+data-type -> array [ range ]
+
+range -> intvalue .. intvalue
+
+stmt-list -> statement ; stmt-list
+stmt-list -> ''
+
+statement -> ass-stmt
+statement -> read-stmt
+statement -> write-stmt
+statement -> if-stmt
+statement -> while-stmt
+statement -> repeat-stmt
+statement -> block
+
+ass-stmt -> varname := exp
+
+exp -> term exp-prime
+
+exp-prime -> add-sign term exp-prime
+exp-prime -> ''
+
+term -> factor term-prime
+
+term-prime -> mul-sign factor term-prime
+term-prime -> ''
+ 
+factor -> ( exp )
+factor -> varname
+factor -> constname
+factor -> value
+
+add-sign -> +
+add-sign -> -
+
+mul-sign -> *
+mul-sign -> /
+mul-sign -> mod
+mul-sign -> div
+
+value -> floatvalue
+value -> intvalue
+
+read-stmt -> read ( name-list )
+read-stmt -> readln ( name-list )
+
+write-stmt -> write ( name-list )
+write-stmt ->  writeln ( name-list )
+
+if-stmt -> if condition then statement else-part
+   
+else-part -> else statement
+else-part -> ''
+
+while-stmt -> while condition do statement
+
+repeat-stmt -> repeat stmt-list until condition
+
+condition -> name-value relational-oper name-value
+
+name-value -> varname
+name-value -> constname
+name-value -> value
+
+relational-oper -> =
+relational-oper -> <>
+relational-oper -> <
+relational-oper -> <=
+relational-oper -> >
+relational-oper -> >=
