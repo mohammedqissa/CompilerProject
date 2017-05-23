@@ -1,5 +1,9 @@
 package compilerproject;
 
+/*
+ * this is to store the productions.
+ */
+
 public class Prod_Array {
 
     private String From;

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Stack;
 
+import javax.swing.JOptionPane;
+
 /**
  * Created by Mohammed Issa & Mohammed Ideas.
  */
@@ -19,9 +21,6 @@ public class Parser {
 	public Parser()
 	{
 
-
-
-
 		Prod = new Productions();
 		Stk = new Stack<String>();
 		input = Scanner.tokens;
@@ -32,8 +31,6 @@ public class Parser {
 			System.out.println(tokens[i].name+"  "+tokens[i].type);
 		}
 		Stk.push("prog-decl");
-
-
 
 		while(!Stk.isEmpty() && cnt < tokens.length)
 		{
@@ -46,14 +43,11 @@ public class Parser {
 					Stk.pop();
 				}
 				else
-					try {
-
-						throw new NullPointerException("mismatch Error at line: " + (tokens[cnt].getLineNumber()) + " Expected: " + Stk.peek() + " not " + tokens[cnt].getTokenString().trim());
-					}
-					catch (NullPointerException e){
-						System.err.print(e.fillInStackTrace());
-						System.exit(1);
-					}
+				{
+					User.error.setText( Scanner.input.get(tokens[cnt].getLineNumber() - 1) + ": \n mismatch Error at line: " + (tokens[cnt].getLineNumber()) + " Expected: " + Stk.peek());
+					JOptionPane.showMessageDialog(null, "There's an error the system will now exit ");
+					System.exit(0);
+				}
 
 			}
 
@@ -62,32 +56,27 @@ public class Parser {
 				System.out.println(Prod.getIndexOfNonterminal(Stk.peek().trim()) + "	"+Stk.peek().trim());
 				System.out.println(Prod.getIndexOfTerminal(tokens[cnt].type) + "	"+tokens[cnt].type);
 
-
 				String prod = Prod.getProductionValue(Prod.getIndexOfNonterminal(Stk.peek().trim()),Prod.getIndexOfTerminal(tokens[cnt].type));
 
 				System.out.println(prod);
-				if (prod.equals("error"))
-
-					try{
-							throw new NullPointerException("parsing Error at line: "+(tokens[cnt].getLineNumber()) +" Expected: "+Stk.peek()+" not "+tokens[cnt].getTokenString().trim());
-
-					}
-					catch (NullPointerException e){
-						System.err.print(e.fillInStackTrace());
-						System.exit(1);
-					}
-
-
+				if (prod.equals("error")){
+					User.error.setText( Scanner.input.get(tokens[cnt].getLineNumber() - 1) + ": \n parsing Error at line: "+(tokens[cnt].getLineNumber()) +" Expected: "+Stk.peek()+" not "+tokens[cnt].getTokenString().trim());
+					JOptionPane.showMessageDialog(null, "There's an error the system will now exit ");
+					System.exit(0);
+				}
+					
 				PushS(prod);
 
-
 			}
-
 
 		}
 
 
-		System.out.println("======= No Errors ========");
+		JOptionPane.showConfirmDialog(null,"No Errors! the system will now exit");
+		System.exit(0);
+		/*
+		 * add a GUI confirmation
+		 */
 		System.exit(0);
 
 	}

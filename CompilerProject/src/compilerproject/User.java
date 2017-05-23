@@ -7,6 +7,8 @@ import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.Vector;
+import java.util.regex.Pattern;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -14,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.SwingConstants;
 import javax.swing.UIManager;
 import javax.swing.UnsupportedLookAndFeelException;
@@ -27,10 +30,9 @@ public class User {
 	static private JFrame frame;
 	private JTable AllTokens;
 	private JTable SymbolTable;
-	private JTable error;
-	private JTable comments;
+	static protected JTextArea error;
 	private Scanner scanner;
-	static String[] header = { "Token", "ID" };
+	static String[] header = { "Token", "ID", "Type" };
 	static String[] header1 = { "Token", "ID" , "Type"};
 	static String[] header2 = { "Token"};
 	static String[] header3 = { "ID","Comment"};
@@ -42,9 +44,7 @@ public class User {
 	private JScrollPane scrollPane_1;
 	private JLabel lblSymbolTable;
 	private JScrollPane scrollPane_2;
-	private JScrollPane scrollPane_3;
 	private JLabel lblLexicalErrors;
-	private JLabel lblComments;
 	private JButton exit;
 
 	/**
@@ -98,8 +98,56 @@ public class User {
 				File f = j.getSelectedFile();
 				scanner = new Scanner(f);
 
-				Parser parser = new Parser();
+				int count = 1 ;
+				for ( int i = 0 ; i < Scanner.consts.size() ; i++){
+					Vector<String> v = new Vector<>();
 
+					v.add(Scanner.consts.get(i));
+					v.add(count+"");
+					count++;
+					for ( int k = 0 ; k <  Scanner.tokens.size() - 1 ; k++){
+						if( Scanner.consts.get(i).equalsIgnoreCase(Scanner.tokens.get(k).name)){
+							
+							v.add(Scanner.tokens.get(k).type);
+						}
+					}
+					mngr1.addRow(v);
+				}
+				
+				for ( int i = 0 ; i < Scanner.vars.size() ; i++){
+					Vector<String> v = new Vector<>();
+
+					v.add(Scanner.vars.get(i));
+					v.add(count+"");
+					count++;
+					for ( int k = 0 ; k <  Scanner.tokens.size() - 1 ; k++){
+						if( Scanner.vars.get(i).equalsIgnoreCase(Scanner.tokens.get(k).name)){
+							v.add(Scanner.tokens.get(k).type);
+						}
+					}
+					mngr1.addRow(v);
+				}
+				
+				count = 1;
+				for ( int i = 0 ; i < Scanner.tokens.size() ; i++){
+					Vector<String> v = new Vector<>();
+
+					v.add(Scanner.tokens.get(i).name);
+					v.add(count+"");
+					count++;
+					
+					String spec = "['<','>',';',',','(',')','+','-','*','/',' ','[',']',':=','..','.','=']";
+					
+					String type = Scanner.tokens.get(i).type;
+					 Pattern pat = Pattern.compile(spec);
+					if ( pat.matcher(type).matches()){
+						type = "Special Symbole";
+					}
+					
+					v.add(type);
+					mngr.addRow(v);
+				}
+				
 			}
 		});
 		read.setBounds(10, 29, 200, 45);
@@ -130,7 +178,7 @@ public class User {
 		AllTokens.setBounds(265, 132, 194, 235);
 
 		scrollPane = new JScrollPane();
-		scrollPane.setBounds(10, 112, 200, 461);
+		scrollPane.setBounds(10, 112, 277, 461);
 		scrollPane.setViewportView(AllTokens);
 		frame.getContentPane().add(scrollPane);
 		
@@ -148,7 +196,7 @@ public class User {
 		SymbolTable.setBounds(265, 132, 194, 235);
 		
 		scrollPane_1 = new JScrollPane();
-		scrollPane_1.setBounds(250, 112, 287, 461);
+		scrollPane_1.setBounds(297, 112, 255, 461);
 		scrollPane_1.setViewportView(SymbolTable);
 		frame.getContentPane().add(scrollPane_1);
 		
@@ -160,65 +208,49 @@ public class User {
 		frame.getContentPane().add(lblSymbolTable);
 		
 
-		error = new JTable(mngr2);
-		DefaultTableCellRenderer headerRenderer1 = new DefaultTableCellRenderer();
-		headerRenderer1.setBackground(new Color(239, 100, 46));
+		error = new JTextArea();
+		error.setEnabled(false);
+//		DefaultTableCellRenderer headerRenderer1 = new DefaultTableCellRenderer();
+//		headerRenderer1.setBackground(new Color(239, 100, 46));
 
-		for (int i = 0; i < error.getModel().getColumnCount(); i++) {
-			error.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer1);
-		}
+//		for (int i = 0; i < error.getModel().getColumnCount(); i++) {
+//			error.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer1);
+//		}
 		error.setFont(new Font("Calibri", Font.PLAIN, 16));
 		error.setForeground(Color.DARK_GRAY);
 
-		error.setPreferredScrollableViewportSize(new Dimension(450, 63));
+//		error.setPreferredScrollableViewportSize(new Dimension(450, 63));
 
-		error.setFillsViewportHeight(true);
-		error.setBorder(new LineBorder(Color.DARK_GRAY));
+//		error.setFillsViewportHeight(true);
+		error.setBorder(new LineBorder(new Color(239, 100, 46)));
 		error.setBounds(265, 132, 194, 235);
 		
 		scrollPane_2 = new JScrollPane();
-		scrollPane_2.setBounds(562, 112, 117, 461);
+		scrollPane_2.setBounds(562, 112, 400, 461);
 		scrollPane_2.setViewportView(error);
 		frame.getContentPane().add(scrollPane_2);
 		
 
-		comments = new JTable(mngr3);
-		DefaultTableCellRenderer headerRenderer2 = new DefaultTableCellRenderer();
-		headerRenderer2.setBackground(new Color(46, 239, 137));
-		for (int i = 0; i < comments.getModel().getColumnCount(); i++) {
-			comments.getColumnModel().getColumn(i).setHeaderRenderer(headerRenderer2);
-		}
-		comments.setFont(new Font("Calibri", Font.PLAIN, 18));
-		comments.setForeground(Color.DARK_GRAY);
 
-		comments.setPreferredScrollableViewportSize(new Dimension(450, 63));
-
-		comments.setFillsViewportHeight(true);
-		comments.setBorder(new LineBorder(Color.DARK_GRAY));
-		comments.setBounds(265, 132, 194, 235);
 		
-//		scrollPane_2 = new JScrollPane();
-//		scrollPane_2.setBounds(562, 112, 117, 461);
-//		scrollPane_2.setViewportView(error);
+//		scrollPane_3 = new JScrollPane();
+//		scrollPane_3.setBounds(699, 112, 273, 461);
+//		scrollPane_3.setViewportView(comments);
+//		frame.getContentPane().add(scrollPane_3);
 		
-		scrollPane_3 = new JScrollPane();
-		scrollPane_3.setBounds(699, 112, 273, 461);
-		scrollPane_3.setViewportView(comments);
-		frame.getContentPane().add(scrollPane_3);
-		
-		lblLexicalErrors = new JLabel("Lexical Errors");
+		lblLexicalErrors = new JLabel(" Errors");
 		lblLexicalErrors.setHorizontalAlignment(SwingConstants.CENTER);
 		lblLexicalErrors.setForeground(Color.DARK_GRAY);
 		lblLexicalErrors.setFont(new Font("Calibri Light", Font.PLAIN, 18));
 		lblLexicalErrors.setBounds(562, 67, 117, 45);
 		frame.getContentPane().add(lblLexicalErrors);
 		
-		lblComments = new JLabel("Comments");
-		lblComments.setHorizontalAlignment(SwingConstants.CENTER);
-		lblComments.setForeground(Color.DARK_GRAY);
-		lblComments.setFont(new Font("Calibri Light", Font.PLAIN, 18));
-		lblComments.setBounds(699, 67, 183, 45);
-		frame.getContentPane().add(lblComments);
+//		lblComments = new JLabel("Comments");
+//		lblComments.setHorizontalAlignment(SwingConstants.CENTER);
+//		lblComments.setForeground(Color.DARK_GRAY);
+//		lblComments.setFont(new Font("Calibri Light", Font.PLAIN, 18));
+//		lblComments.setBounds(699, 67, 183, 45);
+//		frame.getContentPane().add(lblComments);
 		
 		exit = new JButton("Exit");
 		exit.addActionListener(new ActionListener() {
@@ -231,7 +263,18 @@ public class User {
 		exit.setFont(new Font("Calibri Light", Font.PLAIN, 18));
 		exit.setBounds(772, 584, 200, 45);
 		frame.getContentPane().add(exit);
+		
+		JButton parse = new JButton("Parse");
+		parse.setForeground(Color.DARK_GRAY);
+		parse.setFont(new Font("Calibri Light", Font.PLAIN, 18));
+		parse.setBounds(250, 29, 200, 45);
+		frame.getContentPane().add(parse);
+		parse.addActionListener(new ActionListener() {
+			
+			public void actionPerformed(ActionEvent e) {
+				Parser parser = new Parser();
+			}
+		});
 
 	}
-
 }

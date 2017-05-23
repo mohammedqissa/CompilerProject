@@ -20,19 +20,17 @@ public class Scanner {
 
     static ArrayList<String> consts = new ArrayList<>();
     static ArrayList<String> vars = new ArrayList<>();
-
+    static List<String> input ;
     static int flag =-1;
 
     static int PROGRAM=0,CONST=1,VAR=2,BEGIN=3;
 
     static ArrayList<String> ReservedWords = new ArrayList<>();
     static ArrayList<String> sympols = new ArrayList<>();
+    // all tokens before cut
     static ArrayList<Token> tokens = new ArrayList<>();
-
+    // all tokens after cut
     static Token[] tokensar;
-
-
-
     File file;
 
 
@@ -41,9 +39,9 @@ public class Scanner {
 
         fillReservedWords();
         fillSympols();
-
         readLines();
 
+        // this is to read the tokens that holds more than one digit. e.g. .. , := , >= ... etc.
         tokensar = new Token[tokens.size()];
         for (int i = 0; i < tokensar.length; i++) {
             tokensar[i] = tokens.get(i);
@@ -122,21 +120,6 @@ public class Scanner {
 
 		Pattern pattern = Pattern.compile(haveEq);
 
-//        String haveDots = "(\\p{ASCII})*:(\\p{ASCII})*";
-//
-//        Pattern pattern2 = Pattern.compile(haveDots);
-
-
-//		if (pattern.matcher("helloa:sda").matches()) {
-//
-//            StringTokenizer stringTokenizer = new StringTokenizer("hello(){asda}", pattern.pattern(), true);
-//
-//            while (stringTokenizer.hasMoreTokens()) {
-//
-//                System.out.println(stringTokenizer.nextToken());
-//            }
-
-//        }
 
         StringTokenizer tokenizer = new StringTokenizer("6=1.3","=:",true);
 		System.out.println(pattern.matcher("var:4").matches() );
@@ -152,7 +135,7 @@ public class Scanner {
         FileReader fileReader = null;
         try {
             fileReader = new FileReader(file);
-            List<String> input = new ArrayList<>();
+            input = new ArrayList<>();
             java.util.Scanner sc = new java.util.Scanner(fileReader);
             while(sc.hasNext()){
             	input.add(sc.nextLine()+"\n");
