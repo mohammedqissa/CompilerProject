@@ -85,6 +85,7 @@ public class Productions {
 		product[ 66 ] = new Prod_Array("relational-oper" , "<=");
 		product[ 67 ] = new Prod_Array("relational-oper" , ">");
 		product[ 68 ] = new Prod_Array("relational-oper" , ">=");
+		
 		// reads the table from scv.
 		try {
 			table = read_table();
